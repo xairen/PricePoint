@@ -5,16 +5,24 @@ from dotenv_vault import load_dotenv
 
 load_dotenv()
 
-# Replace 'YOUR_API_KEY' with your actual Alpha Vantage API key
-api_key = os.getenv(API_KEY)
+api_key = os.getenv("API_KEY")
 
-# Initialize the TimeSeries class with your API key
-ts = TimeSeries(key=api_key, output_format='pandas')
+def plot_stocks(stock_symbols, api_key, outputsize='compact'):
+    ts = TimeSeries(key=api_key, output_format='pandas')
 
-# Get daily stock data for a specific symbol (e.g., 'AAPL' for Apple Inc.)
-data, meta_data = ts.get_daily(symbol='AAPL', outputsize='compact')
+    for symbol in stock_symbols:
+        try:
+            #Get daily stock data for current symbol
+            data, met_data = ts.get_daily(symbol=symbol, outputsize=outputsize)
 
-# Plot the closing prices
-data['4. close'].plot()
-plt.title('Daily Closing Price for AAPL')
-plt.show()
+            #Plot the closing prices
+            plt.figure(figsize=(10,6))
+            data['4. close'].plot()
+            plt.title(f'Daily Closing Price for {symbol}')
+            plt.show()
+        except Exception as e:
+            print(f"Error while fetching data for {symbol}: {e}")
+
+stock_symbols = ['AAPL', 'MSFT', 'GOOGL']
+
+plot_stocks(stock_symbols, api_key)
